@@ -25,4 +25,4 @@ If you wish to keep track of development progress, pelase see the [trello board]
 
 ### How does this work? I need help!
 
-First thing to try is reading the wiki pages over on our [Github Pages site](https://colonyplusplus.github.io/ColonyPlusPlus-Generator/). 
+First thing to try is reading the wiki pages over on our [getting started guide](https://colonyplusplus.github.io/ColonyPlusPlus-Generator/getting-started.md). 
