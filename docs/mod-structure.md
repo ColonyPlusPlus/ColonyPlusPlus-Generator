@@ -29,7 +29,7 @@ Assets are stored in the `assets` folder and follow the internal structure of al
 
 ### Data
 
-Data files are stored in the `data` folder. This includes any *.json file and will eventually grow to include any data folders containing JSON files, suhc as the structures folder, but this is not yet implemented.
+Data files are stored in the `data` folder. This includes any *.json file and will eventually grow to include any data folders containing JSON files, such as the structures folder, but this is not yet implemented.
 
 ### Special Files
 
