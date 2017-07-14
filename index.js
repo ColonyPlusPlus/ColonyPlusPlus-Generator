@@ -39,7 +39,8 @@ switch(command) {
 
 		if(programdata.datadir) {
 			// say what we're doing
-			console.log(chalk.bold.green('Running command: ' + command));
+			console.log(chalk.bold.cyan('Initialising command: ' + command));
+			console.log('');
 			
 			// initialise the generator with datadir
 			var run = new generator(programdata.datadir, programdata.moddir);
