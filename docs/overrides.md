@@ -19,19 +19,23 @@ This instructs the code generator to overwrite the `isSolid` value of the `air` 
 Before the generator runs the JSON reads:
 
 ```
-"air" : {
+{
+	"air" : {
 		"isSolid" : false,
 		"isPlaceable" : false
 	},
+}
 ```
 
 After the generator runs the JSON will read:
 
 ```
-"air" : {
+{
+	"air" : {
 		"isSolid" : true,
 		"isPlaceable" : false
 	},
+}
 ```
 
 _Note: the generator _only_ overwrites the values contained in `types_overrides.json`_
