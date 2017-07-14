@@ -2,3 +2,4 @@ theme: jekyll-theme-cayman
 # Dependencies
 markdown:    kramdown
 highlighter: rouge
+permalink: pretty
