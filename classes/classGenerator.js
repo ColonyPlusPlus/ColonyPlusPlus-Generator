@@ -33,7 +33,10 @@ method.getDirectory = function() {
 // Run logic
 method.doRun = function() {
 
+	// Run each module in a series
 	async.series([
+
+		// run overrides first
 	    function(callback) {
 	        doOverrides();
 
@@ -43,7 +46,7 @@ method.doRun = function() {
 	// optional callback
 	function(err, results) {
 	    // results is now equal to ['one', 'two']
-	    console.log(results);
+	    console.log(chalk.bold.cyan("Code Generation Complete"));
 	});
 	
 	
