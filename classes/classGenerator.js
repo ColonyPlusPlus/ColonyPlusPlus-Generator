@@ -46,6 +46,7 @@ method.doRun = function() {
 	// optional callback
 	function(err, results) {
 	    // results is now equal to ['one', 'two']
+	    console.log();
 	    console.log(chalk.bold.cyan("Code Generation Complete (ran " + results.length + " modules)"));
 	});
 	
@@ -97,7 +98,6 @@ function saveModifiedTypes() {
 	fs.writeFileSync(config.datadir + path.sep + staticconfig.typesfile, typesfile); 
 
 	// Let the user know what's going on    
-	console.log('');
     console.log(chalk.bold.green("Complete: Types Data Overridden!"));
     console.log(chalk.bold.yellow('Total changes made: ' + data.typesoverridescount));
 }
