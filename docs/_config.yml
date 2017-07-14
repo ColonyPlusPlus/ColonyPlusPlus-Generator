@@ -3,3 +3,4 @@ theme: jekyll-theme-cayman
 markdown:    kramdown
 highlighter: rouge
 permalink: pretty
+baseurl: /ColonyPlusPlus-Generator
