@@ -2,11 +2,21 @@ var method = Generator.prototype;
 var fs = require('fs');
 var extend = require('extend');
 var chalk = require('chalk');
+var async = require("async");
+
 const path = require('path');
+
 var config = {
 	datadir: '',
 	moddir: '',
 };
+
+var staticconfig = {
+	typesfile: 'types.json',
+	typesoverridesfile: 'types_overrides.json'
+};
+
+var data = {};
 
 function Generator(datadirectory, moddirectory) {
     config.datadir = datadirectory;
@@ -23,71 +33,70 @@ method.getDirectory = function() {
 // Run logic
 method.doRun = function() {
 
+	async.series([
+	    function(callback) {
+	        doOverrides();
+
+	        callback(null, 'overrides');
+	    }
+	],
+	// optional callback
+	function(err, results) {
+	    // results is now equal to ['one', 'two']
+	    console.log(results);
+	});
+	
+	
+
+}
+
+
+function doOverrides() {
 	// Tell the user we're starting
 	console.log(chalk.bold.green("Starting: Types Data Override!"));
 
 	// find types.json
-	fs.readFile(config.datadir + path.sep + 'types.json' , 'utf8', function (err, data) {
-	    if (err) throw err; // we'll not consider error handling for now
-	    
-	    // Initiate types.json loading
-	    loadTypesJson(data);
-	});
+	data.types = JSON.parse(fs.readFileSync(config.datadir + path.sep + staticconfig.typesfile , 'utf8'));
+
+	// find types_overrides.json
+	data.typesoverrides = JSON.parse(fs.readFileSync(config.moddir + path.sep + 'overrides' + path.sep + staticconfig.typesoverridesfile , 'utf8'));
+
+	// Assume it worked, this time just parse to JSON and pass it straight to the merger
+    performTypesOverrides();
+
+    // pass to the save function, with the number of changes
+	saveModifiedTypes();
 
 }
 
-function loadTypesJson(data) {
 
-	// Try parse it to JSON
-	var typesjson = JSON.parse(data);
-
-	// Assume success and continue to load overrides
-	loadTypesOverrides(typesjson);
-}
-
-function loadTypesOverrides(typesdata) {
-
-	// Now try reading the overrides file
-	fs.readFile(config.moddir + path.sep + 'types_overrides.json' , 'utf8', function (err, data) {
-	    if (err) throw err; // we'll not consider error handling for now
-	    
-	    // Assume it worked, this time just parse to JSON and pass it straight to the merger
-	    performTypesOverrides(typesdata, JSON.parse(data));
-	});
-
-}
-
-function performTypesOverrides(typesdata, overrides) {
+function performTypesOverrides() {
 
 	// Make a new blank object
 	var target = {};
 
 	// cache the number of changes (to tell the user)
-	var changeCount = Object.keys(overrides).length;
+	data.typesoverridescount = Object.keys(data.typesoverrides).length;
 
 	// merge the changes
-	extend(true, target, typesdata, overrides);
+	extend(true, target, data.types, data.typesoverrides);
 
-	// pass to the save function, with the number of changes
-	saveModifiedTypes(target, changeCount);
+	data.types = target;
+
 }
 
-function saveModifiedTypes(typesdata, changeCount) {
+function saveModifiedTypes() {
 
 	// stringify the JSON, with pretty print
-	var typesfile = JSON.stringify(typesdata, null, 2);
+	var typesfile = JSON.stringify(data.types, null, 2);
 
 	// write it out to the file
-	fs.writeFile(config.datadir + path.sep + 'types.json',typesfile, function(err) {
-	    if(err) {
-	        return console.log(err);
-	    }
+	fs.writeFileSync(config.datadir + path.sep + staticconfig.typesfile, typesfile); 
 
-	    // Let the user know what's going on
-	    console.log('');
-	    console.log(chalk.bold.green("Complete: Types Data Overridden!"));
-	    console.log(chalk.bold.yellow('Total changes made: ' + changeCount));
-	}); 
+	// Let the user know what's going on    
+	console.log('');
+    console.log(chalk.bold.green("Complete: Types Data Overridden!"));
+    console.log(chalk.bold.yellow('Total changes made: ' + data.typesoverridescount));
 }
 
 module.exports = Generator;
