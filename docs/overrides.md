@@ -23,7 +23,7 @@ Before the generator runs the JSON reads:
 	"air" : {
 		"isSolid" : false,
 		"isPlaceable" : false
-	},
+	}
 }
 ```
 
@@ -34,7 +34,7 @@ After the generator runs the JSON will read:
 	"air" : {
 		"isSolid" : true,
 		"isPlaceable" : false
-	},
+	}
 }
 ```
 
