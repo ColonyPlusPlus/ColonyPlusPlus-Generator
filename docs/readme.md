@@ -22,3 +22,7 @@ The purpose of this proejct is to allow the easy addition of numerous blocks to 
 ### Development
 
 If you wish to keep track of development progress, pelase see the [trello board](https://trello.com/b/9rnKpAbm/json-generator).
+
+### How does this work? I need help!
+
+First thing to try is reading the [getting started guide](getting-started.html). 
