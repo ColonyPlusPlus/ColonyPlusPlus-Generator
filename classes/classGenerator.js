@@ -9,6 +9,7 @@ const path = require('path');
 var config = {
 	datadir: '',
 	moddir: '',
+	outdir: '',
 };
 
 var staticconfig = {
@@ -18,9 +19,10 @@ var staticconfig = {
 
 var data = {};
 
-function Generator(datadirectory, moddirectory) {
+function Generator(datadirectory, moddirectory, outdirectory) {
     config.datadir = datadirectory;
     config.moddir = moddirectory;
+    config.outdir = outdirectory;
 
     
 }
@@ -95,7 +97,7 @@ function saveModifiedTypes() {
 	var typesfile = JSON.stringify(data.types, null, 2);
 
 	// write it out to the file
-	fs.writeFileSync(config.datadir + path.sep + staticconfig.typesfile, typesfile); 
+	fs.writeFileSync(config.outdir + path.sep + staticconfig.typesfile, typesfile); 
 
 	// Let the user know what's going on    
     console.log(chalk.bold.green("Complete: Types Data Overridden!"));

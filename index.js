@@ -11,6 +11,7 @@ program
 	.arguments('<command>')
 	.option('-d, --datadir <datadir>', 'The game data directory')
 	.option('-m, --moddir <moddir>', 'The mod data directory')
+	.option('-o, --outdir <outdir>', 'The output data directory')
 	.action(function(input_command) {
 		command = input_command;
 		programdata = program;
@@ -37,13 +38,18 @@ switch(command) {
 		break;
 	default:
 
-		if(programdata.datadir) {
+		if(programdata.datadir && programdata.moddir) {
 			// say what we're doing
 			console.log(chalk.bold.cyan('Initialising command: ' + command));
 			console.log('');
 			
+			var outDir = programdata.datadir;
+			if(programdata.outdir) {
+				outDir = programdata.outdir;
+			}
+
 			// initialise the generator with datadir
-			var run = new generator(programdata.datadir, programdata.moddir);
+			var run = new generator(programdata.datadir, programdata.moddir, outDir);
 
 			run.doRun();
 		} else {
