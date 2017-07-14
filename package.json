@@ -1,0 +1,26 @@
+{
+  "name": "colonygen",
+  "version": "0.0.1",
+  "description": "Colony Plus Plus Code Generator",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "bin": {
+    "colonygen": "./index.js"
+  },
+  "keywords": [
+    "colony",
+    "game",
+    "generator"
+  ],
+  "author": "Tom Kent",
+  "license": "ISC",
+  "dependencies": {
+    "chalk": "^2.0.1",
+    "commander": "^2.11.0",
+    "extend": "^3.0.1",
+    "progress": "^2.0.0",
+    "underscore": "^1.8.3"
+  }
+}
