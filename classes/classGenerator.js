@@ -46,7 +46,7 @@ method.doRun = function() {
 	// optional callback
 	function(err, results) {
 	    // results is now equal to ['one', 'two']
-	    console.log(chalk.bold.cyan("Code Generation Complete"));
+	    console.log(chalk.bold.cyan("Code Generation Complete (ran " + results.length + " modules)"));
 	});
 	
 	
