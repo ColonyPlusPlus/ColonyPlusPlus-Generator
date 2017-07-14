@@ -38,4 +38,4 @@ After the generator runs the JSON will read:
 }
 ```
 
-_Note: the generator _only_ overwrites the values contained in `types_overrides.json`_
+_Note: the generator only overwrites the values contained in `types_overrides.json`_
