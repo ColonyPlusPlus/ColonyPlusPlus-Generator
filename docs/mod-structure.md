@@ -18,6 +18,7 @@ Mods should be structured using the following format:
 			- someitem.json
 			- ...
 		- types_overrides.json
+		- materials.json
 		- ...
 	- modinfo.json
 ```
@@ -27,6 +28,10 @@ Mods should be structured using the following format:
 ### Assets
 
 Assets are stored in the `assets` folder and follow the internal structure of all of the asset oriented gamedata folders. This excludes any folder that contains JSON data. Assets are directly copied to the gamedata folder when the generator is run. They are copied and will overwrite any files already present.
+
+#### Adding Materials
+
+Materials must be added before being used in types, the the `materials.json` file found in `/data`. They are added much like they are to the standard `types.json` found in `/assets/materials/blocks/types.json`. Simply place in the new values you want, or updated values for current blocks and they will be safely merged into the version found in the assets folder.
 
 ### Data
 
