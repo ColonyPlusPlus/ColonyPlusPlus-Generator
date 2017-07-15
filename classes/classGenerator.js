@@ -1,5 +1,5 @@
 var method = Generator.prototype;
-var fs = require('fs');
+var fs = require('fs-extra');
 var extend = require('extend');
 var chalk = require('chalk');
 var async = require("async");
@@ -16,7 +16,8 @@ var staticconfig = {
 	mod: {
 		modinfo: 'modinfo.json',
 		typesoverrides: 'data' + path.sep + 'types_overrides.json',
-		typesfolder: 'data' + path.sep + 'types' + path.sep 
+		typesfolder: 'data' + path.sep + 'types' + path.sep,
+		assetfolder: 'assets' + path.sep
 	},
 	gamedata: {
 		types: 'types.json',
@@ -162,6 +163,10 @@ function doLogic() {
 	if(modinfo.modules.includes('addtypes')) {
 		doAddTypes();
 	}
+
+	if(modinfo.modules.includes('copyassets')) {
+		doCopyAssets();
+	}
 }
 
 // Save out all game data!
@@ -221,11 +226,24 @@ function doAddTypes() {
 	});
 
 	// merge the changes
-	extend(true, data.gamedata.types, data.mod.addtypes);
+	extend(data.gamedata.types, data.mod.addtypes);
 
 	// tell the user what we're doing
 	console.log(chalk.bold.yellow("Additional Types Added"));
 
+}
+
+// Copy assets from the assets folder to output
+function doCopyAssets() {
+
+	// tell the user what we're doing
+	console.log(chalk.bold.yellow("Copying Assets"));
+
+	// Do the copy
+	fs.copySync(config.moddir + path.sep + staticconfig.mod.assetfolder, config.outdir )
+
+	// tell the user what we're doing
+	console.log(chalk.bold.yellow("Copied Assets"));
 }
 
 
