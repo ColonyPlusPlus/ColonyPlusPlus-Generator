@@ -38,3 +38,5 @@ Currently unimplemented, will add a localisation string for the type
 
 This contains the type data itself. This is essentailly an object that will contain all the properties that the game will use. You can find examples of these in the `types.json` file provided with the game.
 
+*note: while types that already exist _can_ be overwritten using this, small alterations to a block should really be done through type overrides, as this _merges_ the changed properties with those already present in the gamedata. Addtypes replaces the entire type, so may result in loss of type properties if used to replace existing types.*
+
