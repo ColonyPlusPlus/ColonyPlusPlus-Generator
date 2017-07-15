@@ -3,6 +3,7 @@ var fs = require('fs-extra');
 var extend = require('extend');
 var chalk = require('chalk');
 var async = require("async");
+//var handlebars = require('handlebars');
 
 const path = require('path');
 
@@ -17,7 +18,8 @@ var staticconfig = {
 		modinfo: 'modinfo.json',
 		typesoverrides: 'data' + path.sep + 'types_overrides.json',
 		typesfolder: 'data' + path.sep + 'types' + path.sep,
-		assetfolder: 'assets' + path.sep
+		assetfolder: 'assets' + path.sep,
+		materials: 'data' + path.sep + 'materials.json',
 	},
 	gamedata: {
 		types: 'types.json',
@@ -27,7 +29,8 @@ var staticconfig = {
 		craftingminting: 'craftingminting.json',
 		craftingshopping: 'craftingshopping.json',
 		craftingsmelting: 'craftingsmelting.json',
-		localizationFolder: 'localization' + path.sep 
+		localizationFolder: 'localization' + path.sep,
+		materials: 'textures' + path.sep + 'materials' + path.sep + 'blocks' + path.sep + 'types.json', 
 	}
 	
 };
@@ -196,6 +199,10 @@ function doLogic() {
 
 	if(modinfo.modules.includes('copyassets')) {
 		doCopyAssets();
+	}
+
+	if(modinfo.modules.includes('materials')) {
+		doAddMaterials();
 	}
 
 	
@@ -520,6 +527,33 @@ function helperDeEnumerateCraftingData() {
 	console.log(chalk.bold.yellow("Spliced Crafting Data"));
 
 }
+
+// add materials
+function doAddMaterials() {
+
+	// tell them what we're doing
+	console.log(chalk.bold.yellow("Loading Materials"));
+
+	// get game material data
+	var materialData = JSON.parse(fs.readFileSync(config.datadir + path.sep + staticconfig.gamedata.materials , 'utf8'));
+
+	// get mod material data
+	var materialModData = JSON.parse(fs.readFileSync(config.moddir + path.sep + staticconfig.mod.materials , 'utf8'));
+
+	// merge the changes
+	var target = {};
+	extend(true, target, materialData, materialModData);
+
+	// tell them what we're doing
+	console.log(chalk.bold.yellow("Saving Updated Materials"));
+
+	// save it
+    fs.writeFileSync(config.outdir + path.sep + staticconfig.gamedata.materials, JSON.stringify(target, null, 2)); 
+    
+    // tell them what we're doing
+    console.log(chalk.bold.yellow("Saved Updated Materials"));
+}
+
 
 // load lcoalization
 function loadLocalization() {
