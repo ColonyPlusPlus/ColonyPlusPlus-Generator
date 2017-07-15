@@ -21,6 +21,12 @@ var staticconfig = {
 	},
 	gamedata: {
 		types: 'types.json',
+		crafting: 'crafting.json',
+		craftingbaking: 'craftingbaking.json',
+		craftinggrinding: 'craftinggrinding.json',
+		craftingminting: 'craftingminting.json',
+		craftingshopping: 'craftingshopping.json',
+		craftingsmelting: 'craftingsmelting.json'
 	}
 	
 };
@@ -34,7 +40,9 @@ var data = {
 	mod: {
 		addtypes: {}
 	},
-	gamedata: {}
+	gamedata: {
+		enumeratedcrafting: {}
+	}
 };
 
 var modinfo = {};
@@ -127,10 +135,19 @@ function initJSONData() {
 	// for adding types we need types.json and the added files, but they will be loaded later
 	if(modinfo.modules.includes('addtypes')) {
 		loadlist.gamedata.pushUnique('types');
+		loadlist.gamedata.pushUnique('crafting');
+		loadlist.gamedata.pushUnique('craftingbaking');
+		loadlist.gamedata.pushUnique('craftinggrinding');
+		loadlist.gamedata.pushUnique('craftingminting');
+		loadlist.gamedata.pushUnique('craftingshopping');
+		loadlist.gamedata.pushUnique('craftingsmelting');
 	}
 
 	// load the required files
 	loadJSONFiles();
+
+	// enumerate crafting data into a big object
+	enumerateCraftingData();
 }
 
 // load individual files to our data structure
@@ -185,6 +202,9 @@ function saveGameData() {
 	    fs.writeFileSync(config.outdir + path.sep + staticconfig.gamedata[file], datastring); 
 
 	});
+
+	// tell the user what we're doing
+	console.log(chalk.bold.green("Saved Gamedata"));
 }
 
 // Perform types overrides
@@ -220,18 +240,256 @@ function doAddTypes() {
 	var typesF = config.moddir + path.sep + staticconfig.mod.typesfolder;
 	// get all new types
 	fs.readdirSync(typesF).forEach(file => {
+
+		// parse the JSON for the type
 		var typeData = JSON.parse(fs.readFileSync(config.moddir + path.sep + staticconfig.mod.typesfolder + file , 'utf8'));
 
+		// add the data portion
 		data.mod.addtypes[typeData.name] = typeData.data;
+
+		// add recipes
+		if(typeData.hasOwnProperty("recipes")) {
+			typeData.recipes.forEach(function(recipe) {
+
+				// reshuffle the data so we get it all together
+				addCraftingRecipe(typeData.name, recipe);
+			 
+			});
+		}
+		
+
 	});
 
 	// merge the changes
 	extend(data.gamedata.types, data.mod.addtypes);
 
+	// deconvolute recipes
+	helperDeEnumerateCraftingData();
+
 	// tell the user what we're doing
 	console.log(chalk.bold.yellow("Additional Types Added"));
 
 }
+
+// Add recipes for the new blocks
+function addCraftingRecipe(key, recipe) {
+
+	// tell the user what we're doing
+	console.log(chalk.bold.yellow("Adding Recipe For: " + key));
+
+	// does the key exist?
+	if(data.gamedata.enumeratedcrafting[key]) {
+		// yes, does it have recipes?
+		if(data.gamedata.enumeratedcrafting[key].hasOwnProperty('recipes')) {
+			// yes, in that case, make out recipe list in this function that recipe list - so we don't overwrite receipes!
+			data.gamedata.enumeratedcrafting[key].recipes.push(recipe);
+		} else {
+			data.gamedata.enumeratedcrafting[key].recipes = [
+				recipe
+			];
+		}
+	} else {
+		// no it doesn't exist yet, lets make it!
+		data.gamedata.enumeratedcrafting[key] = {};
+		data.gamedata.enumeratedcrafting[key].recipes = [
+			recipe
+		];
+
+	}
+
+}
+
+
+// Permute each crafting data file, switching it to "key" => {recipe} instead of having the type be inside the recipe
+function enumerateCraftingData() {
+	/*
+	Current:
+
+	[
+		{
+			"results" : [
+				{
+					"type" : "bed"
+				}
+			],
+			"requires" : [
+				{
+					"type" : "planks",
+					"amount" : 3
+				},
+				{
+					"type" : "straw",
+					"amount" : 3
+				}
+			],
+			"npcCraftable" : true
+		}
+	]
+
+	New:
+
+	{
+		"bed": {
+			"recipes": [
+				{
+					"type": "crafting",
+					"recipe": {
+						"results" : [
+							{
+								"type" : "bed"
+							}
+						],
+						"requires" : [
+							{
+								"type" : "planks",
+								"amount" : 3
+							},
+							{
+								"type" : "straw",
+								"amount" : 3
+							}
+						],
+						"npcCraftable" : true
+					}
+					
+				},
+				........
+			]
+		},
+
+	}
+	*/
+
+	// tell the user what we're doing
+	console.log(chalk.bold.yellow("Enumerating Crafting Data"));
+
+	// crafting data
+	data.gamedata.crafting.forEach(function(item) {
+
+		// reshuffle the data so we get it all together
+		helperEnumerateCraftingData(item.results[0].type, "crafting", item);
+	 
+	});
+
+	// craftingbaking data
+	data.gamedata.craftingbaking.forEach(function(item) {
+
+		// reshuffle the data so we get it all together
+		helperEnumerateCraftingData(item.results[0].type, "craftingbaking", item);
+	 
+	});
+
+	// craftinggrinding data
+	data.gamedata.craftinggrinding.forEach(function(item) {
+
+		// reshuffle the data so we get it all together
+		helperEnumerateCraftingData(item.results[0].type, "craftinggrinding", item);
+	 
+	});
+
+	// craftingminting data
+	data.gamedata.craftingminting.forEach(function(item) {
+
+		// reshuffle the data so we get it all together
+		helperEnumerateCraftingData(item.results[0].type, "craftingminting", item);
+	 
+	});
+
+	// craftingshopping data
+	data.gamedata.craftingshopping.forEach(function(item) {
+
+		// reshuffle the data so we get it all together
+		helperEnumerateCraftingData(item.results[0].type, "craftingshopping", item);
+	 
+	});
+
+	// craftingsmelting data
+	data.gamedata.craftingsmelting.forEach(function(item) {
+
+		// reshuffle the data so we get it all together
+		helperEnumerateCraftingData(item.results[0].type, "craftingsmelting", item);
+	 
+	});
+
+	// tell the user what we're doing
+	console.log(chalk.bold.yellow("Built Crafting Data Object"));
+
+}
+
+// take recipes, and put them 
+function helperEnumerateCraftingData(key, recipeType, recipe) {
+
+	// make an empty recipe array
+	var recipes = [];
+
+	// does the object exist in our recipe list?
+	if(data.gamedata.enumeratedcrafting[key]) {
+		// yes, does it have recipes?
+		if(data.gamedata.enumeratedcrafting[key].hasOwnProperty('recipes')) {
+			// yes, in that case, make out recipe list in this function that recipe list - so we don't overwrite receipes!
+			recipes = data.gamedata.enumeratedcrafting[key].recipes;
+		}
+	} else {
+		// no it doesn't exist yet, lets make it!
+		data.gamedata.enumeratedcrafting[key] = {};
+	}
+
+	// create a new recipe object
+	var recipe = {
+		type: recipeType,
+		recipe: recipe
+	};
+
+	// add it to the lsit of recipes
+	recipes.push(recipe);
+
+	// update recipes
+	data.gamedata.enumeratedcrafting[key].recipes = recipes;
+}
+
+
+// put the recipes back!
+function helperDeEnumerateCraftingData() {
+
+	// tell the user what we're doing
+	console.log(chalk.bold.yellow("Splicing Crafting Data"));
+
+	// make new craftingdata objects
+	var craftingdata = {
+		crafting: [],
+		craftingbaking: [],
+		craftinggrinding: [],
+		craftingminting: [],
+		craftingshopping: [],
+		craftingsmelting: []
+	};
+
+
+	// Iterate over all recipes
+	Object.keys(data.gamedata.enumeratedcrafting).forEach(function(craftingKey) {
+
+		// Take this, and buld a new recipe object
+		data.gamedata.enumeratedcrafting[craftingKey].recipes.forEach(function(recipe) {
+			
+			// take the recipe, and add it to the right recipe object
+			craftingdata[recipe.type].push(recipe.recipe);
+
+		});
+	 
+	});
+
+	data.gamedata.crafting = craftingdata.crafting;
+	data.gamedata.craftingbaking = craftingdata.craftingbaking;
+	data.gamedata.craftinggrinding = craftingdata.craftinggrinding;
+	data.gamedata.craftingminting = craftingdata.craftingminting;
+	data.gamedata.craftingshopping = craftingdata.craftingshopping;
+	data.gamedata.craftingsmelting = craftingdata.craftingsmelting;
+
+	// tell the user what we're doing
+	console.log(chalk.bold.yellow("Spliced Crafting Data"));
+
+}
+
 
 // Copy assets from the assets folder to output
 function doCopyAssets() {
@@ -245,6 +503,7 @@ function doCopyAssets() {
 	// tell the user what we're doing
 	console.log(chalk.bold.yellow("Copied Assets"));
 }
+
 
 
 // helpers
