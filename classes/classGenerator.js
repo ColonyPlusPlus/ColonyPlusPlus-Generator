@@ -112,7 +112,7 @@ function initJSONData() {
 	console.log(chalk.bold.yellow("Initialising Mod"));
 
 	// first, build a list of tiles to load!
-	if(modinfo.modules.hasOwnProperty('typesoverrides')) {
+	if(modinfo.modules.includes('typesoverrides')) {
 		loadlist.mod.push('typesoverrides');
 		loadlist.gamedata.push('types');
 	}
@@ -144,7 +144,7 @@ function doLogic() {
 	// tell the user what we're doing
 	console.log(chalk.bold.yellow("Starting Mod Loop"));
 
-	if(modinfo.modules.hasOwnProperty('typesoverrides')) {
+	if(modinfo.modules.includes('typesoverrides')) {
 		doOverrides();
 	}
 }
