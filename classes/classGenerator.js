@@ -15,7 +15,7 @@ var config = {
 var staticconfig = {
 	mod: {
 		modinfo: 'modinfo.json',
-		typesoverrides: 'overrides' + path.sep + 'types_overrides.json',
+		typesoverrides: 'data' + path.sep + 'types_overrides.json',
 		typesfolder: 'data' + path.sep + 'types' + path.sep 
 	},
 	gamedata: {
