@@ -4,12 +4,13 @@ The purpose of this project is to allow the easy addition of numerous blocks to 
 
 ### How to use
 
-* Download the repo
-* Install NodeJS/NPM
-* Open terminal/cmd/powershell/whatever bash command line tool you use for NPM
-* `npm install -g`
-* Run the tool with: `colongygen run -d {gamedatadir} -m {moddatadir}`
-* The generator will then merge any changes from the mod into the base game
+1. Download the repo
+2. Install NodeJS/NPM
+3. Open terminal/cmd/powershell/whatever bash command line tool you use for NPM
+4. Move to the directory where you downloaded the generator
+5. `npm install -g`
+6. Run the tool with: `colongygen run -d {gamedatadir} -m {moddatadir}`
+7. The generator will then merge any changes from the mod into the base game
 
 For more information see the [installation instructions]({{ site.baseurl }}/installation).
 
