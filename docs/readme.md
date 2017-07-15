@@ -19,10 +19,10 @@ The [getting started guide]({{ site.baseurl }}/getting-started) contains instruc
 
 ### Planned Features
 
-* [x] Merging data into types.json to override data
-* [ ] Adding new blocks to types.json and the respective recipes
-* [ ] Using templates to add variations of blocks and recipes without creating huge mod JSON files (such as making 20 blocks with 20 variants from a small JSON file, instead of 4000 entries - and making all the recipes too!)
-* [ ] In future adding new plants/tools/NPCs as the game mod API develops
+* Merging data into types.json to override data
+* Adding new blocks to types.json and the respective recipes
+* Using templates to add variations of blocks and recipes without creating huge mod JSON files (such as making 20 blocks with 20 variants from a small JSON file, instead of 4000 entries - and making all the recipes too!)
+* In future adding new plants/tools/NPCs as the game mod API develops
 
 ### Development
 
