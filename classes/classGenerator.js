@@ -26,7 +26,8 @@ var staticconfig = {
 		craftinggrinding: 'craftinggrinding.json',
 		craftingminting: 'craftingminting.json',
 		craftingshopping: 'craftingshopping.json',
-		craftingsmelting: 'craftingsmelting.json'
+		craftingsmelting: 'craftingsmelting.json',
+		localizationFolder: 'localization' + path.sep 
 	}
 	
 };
@@ -38,10 +39,15 @@ var loadlist = {
 
 var data = {
 	mod: {
-		addtypes: {}
+		addtypes: {},
+		localization: {}
 	},
 	gamedata: {
-		enumeratedcrafting: {}
+		enumeratedcrafting: {},
+		localization: {
+			types: {},
+			typeuses: {}
+		}
 	}
 };
 
@@ -98,7 +104,6 @@ method.doRun = function() {
 	});
 	
 }
-
 
 // Get mod info from modinfo.json
 function getModInfo() {
@@ -177,6 +182,10 @@ function doLogic() {
 	// tell the user what we're doing
 	console.log(chalk.bold.yellow("Starting Mod Loop"));
 
+	if(modinfo.modules.includes('localization')) {
+		loadLocalization();
+	}
+
 	if(modinfo.modules.includes('typesoverrides')) {
 		doOverrides();
 	}
@@ -188,6 +197,8 @@ function doLogic() {
 	if(modinfo.modules.includes('copyassets')) {
 		doCopyAssets();
 	}
+
+	
 }
 
 // Save out all game data!
@@ -209,6 +220,11 @@ function saveGameData() {
 
 	// tell the user what we're doing
 	console.log(chalk.bold.green("Saved Gamedata"));
+
+	// save localization data
+	if(modinfo.modules.includes('localization')) {
+		saveLocalizationData();
+	}
 }
 
 // Perform types overrides
@@ -233,7 +249,6 @@ function doOverrides() {
 	console.log(chalk.bold.yellow("Type Overrides Completed"));
 
 }
-
 
 // Perform add new blocks/items
 function doAddTypes() {
@@ -262,6 +277,17 @@ function doAddTypes() {
 				addCraftingRecipe(typeData.name, recipe);
 			 
 			});
+		}
+
+		// add localization data IF localization is loaded AND the item has some
+		if(modinfo.modules.includes('localization') && typeData.hasOwnProperty("localization")) {
+
+			
+			addLocalization(typeData.name, "types", typeData.localization["en-US"].types);
+			addLocalization(typeData.name, "typeuses", typeData.localization["en-US"].typeuses);
+
+			// tell the user what we're doing
+			console.log(chalk.bold.blue("Added localization strings for " + typeData.name));
 		}
 		
 
@@ -305,7 +331,6 @@ function addCraftingRecipe(key, recipe) {
 	}
 
 }
-
 
 // Permute each crafting data file, switching it to "key" => {recipe} instead of having the type be inside the recipe
 function enumerateCraftingData() {
@@ -454,7 +479,6 @@ function helperEnumerateCraftingData(key, recipeType, recipe) {
 	data.gamedata.enumeratedcrafting[key].recipes = recipes;
 }
 
-
 // put the recipes back!
 function helperDeEnumerateCraftingData() {
 
@@ -497,6 +521,85 @@ function helperDeEnumerateCraftingData() {
 
 }
 
+// load lcoalization
+function loadLocalization() {
+	parseLocalization();
+}
+
+function parseLocalization() {
+	
+	var localizationFolder = staticconfig.gamedata.localizationFolder;
+
+	console.log(chalk.bold.cyan("Loading Language (gamedata): en-US/types.json"));
+    data.gamedata.localization.types = JSON.parse(fs.readFileSync(config.datadir + path.sep + staticconfig.gamedata.localizationFolder + path.sep + 'en-US/' + 'types.json', 'utf8'));
+    console.log(chalk.bold.green("Loaded Language (gamedata): en-US/types.json"));
+
+    console.log(chalk.bold.cyan("Loading Language (gamedata): en-US/typeuses.json"));
+    data.gamedata.localization.typeuses = JSON.parse(fs.readFileSync(config.datadir + path.sep + staticconfig.gamedata.localizationFolder + path.sep + 'en-US/' + 'typeuses.json', 'utf8'));
+    console.log(chalk.bold.green("Loaded Language (gamedata): en-US/typeuses.json"));
+
+}
+
+// add localization
+function addLocalization(key, type, ldata) {
+
+	
+	switch(type) {
+		case 'types':
+		data.gamedata.localization.types[key] = ldata;
+		
+		break;
+
+		case 'typeuses':
+		data.gamedata.localization.typeuses[key] = ldata;
+
+		break;
+
+		default:
+		break;
+
+	}
+}
+
+function saveLocalizationData() {
+
+	//make sure localization folder exists
+	createLocalizationFolder('en-US');
+
+	//tell them what's going on
+	console.log(chalk.bold.cyan("Saving Language: en-US/types.json"));
+	
+	// make it into a nice json string
+	var datastring = JSON.stringify(data.gamedata.localization.types, null, 2);
+
+	// save it
+    fs.writeFileSync(config.outdir + path.sep + staticconfig.gamedata.localizationFolder + path.sep + 'en-US' + path.sep + 'types.json', datastring); 
+    
+    // done!
+    console.log(chalk.bold.green("Saving Language: en-US/types.json"));
+
+    //tell them what's going on
+	console.log(chalk.bold.cyan("Saving Language: en-US/typeuses.json"));
+	
+	// make it into a nice json string
+	var datauses = JSON.stringify(data.gamedata.localization.typeuses, null, 2);
+
+	// save it
+    fs.writeFileSync(config.outdir + path.sep + staticconfig.gamedata.localizationFolder + path.sep + 'en-US' + path.sep + 'typeuses.json', datauses); 
+    
+    // done!
+    console.log(chalk.bold.green("Saving Language: en-US/typeuses.json"));
+}
+
+function createLocalizationFolder(lang) {
+	if (!fs.existsSync(config.outdir + path.sep + staticconfig.gamedata.localizationFolder)){
+	    fs.mkdirSync(config.outdir + path.sep + staticconfig.gamedata.localizationFolder);
+	}
+
+	if (!fs.existsSync(config.outdir + path.sep + staticconfig.gamedata.localizationFolder + path.sep + lang)){
+	    fs.mkdirSync(config.outdir + path.sep + staticconfig.gamedata.localizationFolder + path.sep + lang);
+	}
+}
 
 // Copy assets from the assets folder to output
 function doCopyAssets() {
