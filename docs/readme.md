@@ -9,7 +9,7 @@ The purpose of this project is to allow the easy addition of numerous blocks to 
 3. Open terminal/cmd/powershell/whatever bash command line tool you use for NPM
 4. Move to the directory where you downloaded the generator
 5. `npm install -g`
-6. Run the tool with: `colongygen run -d {gamedatadir} -m {moddatadir}`
+6. Run the tool with: `colonygen run -d {gamedatadir} -m {moddatadir}`
 7. The generator will then merge any changes from the mod into the base game
 
 For more information see the [installation instructions]({{ site.baseurl }}/installation).
