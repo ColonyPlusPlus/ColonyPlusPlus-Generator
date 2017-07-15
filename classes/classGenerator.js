@@ -158,12 +158,16 @@ function loadJSONFiles() {
 
 	// load mods data
 	loadlist.mod.forEach(function(file) {
+		console.log(chalk.bold.cyan("Loading (mod): " + staticconfig.mod[file]));
 	    data.mod[file] = JSON.parse(fs.readFileSync(config.moddir + path.sep + staticconfig.mod[file] , 'utf8'));
+	    console.log(chalk.bold.green("Loaded (mod): " + staticconfig.mod[file]));
 	});
 
 	// load game data
 	loadlist.gamedata.forEach(function(file) {
+		console.log(chalk.bold.cyan("Loading (gamedata): " + staticconfig.gamedata[file]));
 	    data.gamedata[file] = JSON.parse(fs.readFileSync(config.datadir + path.sep + staticconfig.gamedata[file] , 'utf8'));
+	    console.log(chalk.bold.green("Loaded (gamedata): " + staticconfig.gamedata[file]));
 	});
 }
 

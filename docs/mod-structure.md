@@ -26,7 +26,7 @@ Mods should be structured using the following format:
 
 ### Assets
 
-Assets are stored in the `assets` folder and follow the internal structure of all of the asset oriented gamedata folders. This excludes any folder that contains JSON data. Assets are directly copied to the gamedata folder when the generator is run.
+Assets are stored in the `assets` folder and follow the internal structure of all of the asset oriented gamedata folders. This excludes any folder that contains JSON data. Assets are directly copied to the gamedata folder when the generator is run. They are copied and will overwrite any files already present.
 
 ### Data
 
