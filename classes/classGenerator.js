@@ -15,7 +15,8 @@ var config = {
 var staticconfig = {
 	mod: {
 		modinfo: 'modinfo.json',
-		typesoverrides: 'overrides' + path.sep + 'types_overrides.json'
+		typesoverrides: 'overrides' + path.sep + 'types_overrides.json',
+		typesfolder: 'data' + path.sep + 'types' + path.sep 
 	},
 	gamedata: {
 		types: 'types.json',
@@ -29,7 +30,9 @@ var loadlist = {
 };
 
 var data = {
-	mod: {},
+	mod: {
+		addtypes: {}
+	},
 	gamedata: {}
 };
 
@@ -67,7 +70,7 @@ method.doRun = function() {
 	    function(callback) { // actual logic
 	        doLogic();
 
-	        callback(null, 'overrides');
+	        callback(null, 'logic');
 	    },
 	    function(callback) { // save game data
 	        saveGameData();
@@ -75,16 +78,16 @@ method.doRun = function() {
 	        callback(null, 'saveata');
 	    }
 	],
+
 	// optional callback
 	function(err, results) {
+
 	    // results is now equal to ['one', 'two']
 	    console.log(chalk.bold.white(""));
 	    console.log(chalk.bold.white("Code Generation Complete (ran " + results.length + " tasks)"));
 	    console.log(chalk.bold.white(""));
 	});
 	
-	
-
 }
 
 
@@ -92,6 +95,7 @@ method.doRun = function() {
 function getModInfo() {
 	modinfo = JSON.parse(fs.readFileSync(config.moddir + path.sep + staticconfig.mod.modinfo , 'utf8'));
 
+	// output mod info to the user
 	outputModInfo();
 }
 
@@ -101,7 +105,7 @@ function outputModInfo() {
 	console.log(chalk.bold.white("--------------------------------------------------------------------"));
 	console.log(chalk.bold.white("Loading mod: " + modinfo.name + ' (version: ' + modinfo.version + ')'));
 	console.log(chalk.bold.white("Authors: " + modinfo.authors));
-	console.log(chalk.bold.white("Running Modules: " + Object.keys(modinfo.modules).join(', ')));
+	console.log(chalk.bold.white("Running Modules: " + modinfo.modules.join(', ')));
 	console.log(chalk.bold.white("--------------------------------------------------------------------"));
 	console.log(chalk.bold.white(""));
 }
@@ -112,12 +116,19 @@ function initJSONData() {
 	console.log(chalk.bold.yellow("Initialising Mod"));
 
 	// first, build a list of tiles to load!
+
+	// for type overrides we need types.json and typesoverrides.json
 	if(modinfo.modules.includes('typesoverrides')) {
-		loadlist.mod.push('typesoverrides');
-		loadlist.gamedata.push('types');
+		loadlist.mod.pushUnique('typesoverrides');
+		loadlist.gamedata.pushUnique('types');
 	}
 
-	
+	// for adding types we need types.json and the added files, but they will be loaded later
+	if(modinfo.modules.includes('addtypes')) {
+		loadlist.gamedata.pushUnique('types');
+	}
+
+	// load the required files
 	loadJSONFiles();
 }
 
@@ -147,6 +158,10 @@ function doLogic() {
 	if(modinfo.modules.includes('typesoverrides')) {
 		doOverrides();
 	}
+
+	if(modinfo.modules.includes('addtypes')) {
+		doAddTypes();
+	}
 }
 
 // Save out all game data!
@@ -174,17 +189,7 @@ function doOverrides() {
 	console.log(chalk.bold.yellow("Performing Type Overrides"));
 
 	// Assume it worked, this time just parse to JSON and pass it straight to the merger
-    performTypesOverrides();
-
-    // tell the user what we're doing
-	console.log(chalk.bold.yellow("Type Overrides Completed"));
-
-}
-
-
-function performTypesOverrides() {
-
-	// Make a new blank object
+    // Make a new blank object
 	var target = {};
 
 	// cache the number of changes (to tell the user)
@@ -195,6 +200,44 @@ function performTypesOverrides() {
 
 	data.gamedata.types = target;
 
+    // tell the user what we're doing
+	console.log(chalk.bold.yellow("Type Overrides Completed"));
+
+}
+
+
+// Perform add new blocks/items
+function doAddTypes() {
+
+	// tell the user what we're doing
+	console.log(chalk.bold.yellow("Loading Additional Mod Types"));
+
+	var typesF = config.moddir + path.sep + staticconfig.mod.typesfolder;
+	// get all new types
+	fs.readdirSync(typesF).forEach(file => {
+		var typeData = JSON.parse(fs.readFileSync(config.moddir + path.sep + staticconfig.mod.typesfolder + file , 'utf8'));
+
+		data.mod.addtypes[typeData.name] = typeData.data;
+	});
+
+	// merge the changes
+	extend(true, data.gamedata.types, data.mod.addtypes);
+
+	// tell the user what we're doing
+	console.log(chalk.bold.yellow("Additional Types Added"));
+
+}
+
+
+// helpers
+
+Array.prototype.pushUnique = function (item){
+    if(this.indexOf(item) == -1) {
+    //if(jQuery.inArray(item, this) == -1) {
+        this.push(item);
+        return true;
+    }
+    return false;
 }
 
 module.exports = Generator;

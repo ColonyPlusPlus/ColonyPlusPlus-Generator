@@ -13,10 +13,10 @@ Mods should be structured using the following format:
 			- ...
 		- ...	
 	- /data
-		- types.json
-		- crafting.json
-		- ...
-	- /overrides
+		- /types
+			- someblock.json
+			- someitem.json
+			- ...
 		- types_overrides.json
 		- ...
 	- modinfo.json
@@ -32,9 +32,13 @@ Assets are stored in the `assets` folder and follow the internal structure of al
 
 Data files are stored in the `data` folder. This includes any *.json file and will eventually grow to include any data folders containing JSON files, such as the structures folder, but this is not yet implemented.
 
-### Overrides
+#### Adding blocks (the /types folder)
 
-See the instructions on [overriding values]({{ site.baseurl }}/overrides) for information on how this folder works.
+See instructions on [adding types]({{ site.baseurl }}/adding-types) for information on how this section works.
+
+#### Overrides
+
+See the instructions on [overriding values]({{ site.baseurl }}/overrides) for information on how this file works.
 
 ### Mod Info
 
@@ -76,5 +80,6 @@ The following modules are currently supported by the loader:
 | Option | Description |
 | --- | --- |
 | `typesoverrides` | Override types.json using properties described in `/overrides/types_overrides.json` (see: [overriding values]({{ site.baseurl }}/overrides))  |
+| `addtypes` | Add new types (blocks/items) to types.json following the [adding types]({{ site.baseurl }}/overrides) documentation  |
 
 

@@ -2,6 +2,10 @@
 
 Overriding is the principle method for changing how items and blocks work in the game. Overrides directly change values from game JSON files on a value-by-value basis. For information on where to place override files please see the [mod structure]({{ site.baseurl }}/mod-structure) documentation.
 
+## Before you start
+
+The modinfo.json file bundled *must* contain the module `typesoverrides` for this code to run
+
 ## Overriding types 
 
 The `types_overrides.json` file is responsible for directly overriding default game values. And example of this in action is in the example mod, where the following override is present.
