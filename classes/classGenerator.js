@@ -248,6 +248,9 @@ function doAddTypes() {
 		// parse the JSON for the type
 		var typeData = JSON.parse(fs.readFileSync(config.moddir + path.sep + staticconfig.mod.typesfolder + file , 'utf8'));
 
+		// inform the user
+		console.log(chalk.bold.white("Adding type: " + typeData.name));
+
 		// add the data portion
 		data.mod.addtypes[typeData.name] = typeData.data;
 
