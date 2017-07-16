@@ -3,7 +3,7 @@ var fs = require('fs-extra');
 var extend = require('extend');
 var chalk = require('chalk');
 var async = require("async");
-//var handlebars = require('handlebars');
+var handlebars = require('handlebars');
 
 const path = require('path');
 
@@ -18,6 +18,8 @@ var staticconfig = {
 		modinfo: 'modinfo.json',
 		typesoverrides: 'data' + path.sep + 'types_overrides.json',
 		typesfolder: 'data' + path.sep + 'types' + path.sep,
+		templatedtypesfolder: 'data' + path.sep + 'templatedtypes' + path.sep,
+		templatesfolder: 'data' + path.sep + 'templates' + path.sep,
 		assetfolder: 'assets' + path.sep,
 		materials: 'data' + path.sep + 'materials.json',
 	},
@@ -197,6 +199,19 @@ function doLogic() {
 		doAddTypes();
 	}
 
+	if(modinfo.modules.includes('addtemplatedtypes')) {
+		doProcessTemplatedTypes();
+	}
+
+	if(modinfo.modules.includes('addtemplatedtypes') || modinfo.modules.includes('addtypes')) {
+	
+		// merge the changes
+		extend(data.gamedata.types, data.mod.addtypes);
+
+		// tell the user what we're doing
+		console.log(chalk.bold.yellow("Additional Types Saved"));
+	}
+
 	if(modinfo.modules.includes('copyassets')) {
 		doCopyAssets();
 	}
@@ -205,7 +220,9 @@ function doLogic() {
 		doAddMaterials();
 	}
 
-	
+	// deconvolute recipes
+	helperDeEnumerateCraftingData();
+
 }
 
 // Save out all game data!
@@ -261,7 +278,7 @@ function doOverrides() {
 function doAddTypes() {
 
 	// tell the user what we're doing
-	console.log(chalk.bold.yellow("Loading Additional Mod Types"));
+	console.log(chalk.bold.yellow("Loading Additional Item Types"));
 
 	var typesF = config.moddir + path.sep + staticconfig.mod.typesfolder;
 	// get all new types
@@ -270,52 +287,101 @@ function doAddTypes() {
 		// parse the JSON for the type
 		var typeData = JSON.parse(fs.readFileSync(config.moddir + path.sep + staticconfig.mod.typesfolder + file , 'utf8'));
 
-		// inform the user
-		console.log(chalk.bold.white("Adding type: " + typeData.name));
-
-		// add the data portion
-		data.mod.addtypes[typeData.name] = typeData.data;
-
-		// add recipes
-		if(typeData.hasOwnProperty("recipes")) {
-			typeData.recipes.forEach(function(recipe) {
-
-				// reshuffle the data so we get it all together
-				addCraftingRecipe(typeData.name, recipe);
-			 
-			});
-		}
-
-		// add localization data IF localization is loaded AND the item has some
-		if(modinfo.modules.includes('localization') && typeData.hasOwnProperty("localization")) {
-
-			
-			addLocalization(typeData.name, "types", typeData.localization["en-US"].types);
-			addLocalization(typeData.name, "typeuses", typeData.localization["en-US"].typeuses);
-
-			// tell the user what we're doing
-			console.log(chalk.bold.blue("Added localization strings for " + typeData.name));
-		}
+		// run the add type function
+		doAddType(typeData);
 		
 
 	});
-
-	// merge the changes
-	extend(data.gamedata.types, data.mod.addtypes);
-
-	// deconvolute recipes
-	helperDeEnumerateCraftingData();
 
 	// tell the user what we're doing
 	console.log(chalk.bold.yellow("Additional Types Added"));
 
 }
 
+function doProcessTemplatedTypes() {
+	// tell the user what we're doing
+	console.log(chalk.bold.yellow("Loading Templated Types"));
+
+	var typesF = config.moddir + path.sep + staticconfig.mod.templatedtypesfolder;
+	
+	// get all new templated types
+	fs.readdirSync(typesF).forEach(file => {
+
+		// parse the JSON for the type
+		var typeData = JSON.parse(fs.readFileSync(config.moddir + path.sep + staticconfig.mod.templatedtypesfolder + file , 'utf8'));
+
+		// inform the user
+		console.log(chalk.bold.white("Found templated type: " + typeData.name));
+
+		// make sure everything is there
+		if(typeData.hasOwnProperty("templates") && typeData.hasOwnProperty("iterations")) {
+			typeData.templates.forEach(function(template) {
+
+				typeData.iterations.forEach(function(iteration) {
+
+					// do the iteration stuff
+					
+					// get the template
+					var templateSource = fs.readFileSync(config.moddir + path.sep + staticconfig.mod.templatesfolder + template + '.tpl' , 'utf8');
+
+					// feed the template to handlebars to begin compile
+					var hbCompiler = handlebars.compile(templateSource);
+
+					// compile with JSON data from iterator, and parse to JSON
+					var jsonData = JSON.parse(hbCompiler(iteration));
+
+					// pass it to the add type function
+				 	doAddType(jsonData);
+
+				});
+
+			});
+		} else {
+			// can't do that! missing!
+			console.log(chalk.bold.red("Error: template or iteration data missing for templated type [" + typeData.name + ']'));
+		}
+	});
+
+		
+	// tell the user what we're doing
+	console.log(chalk.bold.yellow("Additional Types Added"));
+}
+
+function doAddType(typeData) {
+
+	// inform the user
+	console.log(chalk.bold.green("Adding type: " + typeData.name));
+
+	// add the data portion
+	data.mod.addtypes[typeData.name] = typeData.data;
+
+	// add recipes
+	if(typeData.hasOwnProperty("recipes")) {
+		typeData.recipes.forEach(function(recipe) {
+
+			// reshuffle the data so we get it all together
+			addCraftingRecipe(typeData.name, recipe);
+		 
+		});
+	}
+
+	// add localization data IF localization is loaded AND the item has some
+	if(modinfo.modules.includes('localization') && typeData.hasOwnProperty("localization")) {
+
+		
+		addLocalization(typeData.name, "types", typeData.localization["en-US"].types);
+		addLocalization(typeData.name, "typeuses", typeData.localization["en-US"].typeuses);
+
+		// tell the user what we're doing
+		console.log(chalk.bold.white("Added localization strings for " + typeData.name));
+	}
+}
+
 // Add recipes for the new blocks
 function addCraftingRecipe(key, recipe) {
 
 	// tell the user what we're doing
-	console.log(chalk.bold.yellow("Adding Recipe For: " + key));
+	console.log(chalk.bold.white("Adding Recipe For: " + key));
 
 	// does the key exist?
 	if(data.gamedata.enumeratedcrafting[key]) {
