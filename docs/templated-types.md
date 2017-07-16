@@ -54,8 +54,8 @@ Here is an example of a templated type JSON file:
 | Field | Description |
 | --- | --- |
 | `name` | The name of the type group, used only for output to the command line |
-| `templates` | An array of templates, these MUST exist in the `/data/tempaltes` folder and end in the `.tpl` extension |
-| `iterations` | This array of objects is merged into the template. In this example, for instance, `wallpaper` will become available in the template as `{{wallpaper}}` |
+| `templates` | An array of templates, these MUST exist in the `/data/templates` folder and end in the `.tpl` extension |
+| `iterations` | This array of objects is merged into the template. In this example, for instance, `wallpaper` will become available in the template as `\{\{wallpaper\}\}` |
 
 *Note: In this example, there are 2 templates and 3 iterations, this will generate 6 items in total. There is no limit to the number of iterations or templates that can be used. If only a single iteration is passed, or only a single template, then it will simply use only that iteration or template.*
 
