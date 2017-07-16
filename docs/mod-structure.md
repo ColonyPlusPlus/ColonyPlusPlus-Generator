@@ -84,8 +84,10 @@ The following modules are currently supported by the loader:
 
 | Option | Description |
 | --- | --- |
-| `typesoverrides` | Override types.json using properties described in `/overrides/types_overrides.json` (see: [overriding values]({{ site.baseurl }}/overrides))  |
-| `addtypes` | Add new types (blocks/items) to types.json following the [adding types]({{ site.baseurl }}/overrides) documentation  |
-| `copyassets` | Any assets in the `/assets` folder for the mod will be copied directly to the output directory (useful for images/textures/sounds)  |
+| `typesoverrides` | Override types.json using properties described in `/overrides/types_overrides.json` (see: [overriding values]({{ site.baseurl }}/overrides)).  |
+| `addtypes` | Add new types (blocks/items) to types.json following the [adding types]({{ site.baseurl }}/overrides) documentation.  |
+| `copyassets` | Any assets in the `/assets` folder for the mod will be copied directly to the output directory (useful for images/textures/sounds).  |
 | `localization` | Parse localization strings found in `types.json` for each block. Currently only supports `en-US`. |
 | `materials` | Parse materials from `/data/materials.json` and place them in the correct place. Required when adding new blocks that have custom textures. |
+| `addtemplatedtypes` | Add templated types to `types.json` following the instructions found on the [templated types]({{ site.baseurl }}/templated-types) page. |
+

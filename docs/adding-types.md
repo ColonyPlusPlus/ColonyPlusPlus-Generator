@@ -68,3 +68,7 @@ This contains the type data itself. This is essentailly an object that will cont
 ### Recipes
 
 Recipes work as they do in the main game files, but with an added "type" property per recipe that dictatess where the recipe belongs.
+
+## Adding Templated Types
+
+If you want to add a number of variations of a single type (perhaps a block with 5 different faces - such as a wallpapered block) then you can do this using [templated types]({{ site.baseurl }}/templated-types).
