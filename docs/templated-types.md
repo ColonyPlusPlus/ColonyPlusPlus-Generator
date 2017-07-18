@@ -1,6 +1,6 @@
 ## Templated Types
 
-Templated types allow you to very quickly make a number of similar blocks by iterating over a single JSON file. This means you don't have to maintain 30 near-identical type JSONs that may only differ in a single JSON property. In order to use templated types you must add the `addtemplatedtypes` module to your `modinfo.json`. We recommend thoroughly reading the [adding types]({{ site.baseurl }}/overrides) documentation to get a thorough understanding of adding new types as templated types essentially build upon this.
+Templated types allow you to very quickly make a number of similar blocks by iterating over a single JSON file. This means you don't have to maintain 30 near-identical type JSONs that may only differ in a single JSON property. In order to use templated types you must add the `addtemplatedtypes` module to your `modinfo.json`. We recommend thoroughly reading the [adding types]({% raw %}{{ site.baseurl }}{% endraw %}/overrides) documentation to get a thorough understanding of adding new types as templated types essentially build upon this.
 
 The code for templated types comes in 2 files:
  - `/templatedtypes/someblock.json` - the file which contains the intstructions for creating your templated blocks
@@ -70,8 +70,8 @@ Example template (`templatedwall.tpl`):
 	"name": "{% raw %}{{itemname}}{% endraw %}",
     "localization": {
         "en-US": {
-            "types": "{{localizationtitle}}",
-            "typeuses": "{{localizationdesc}}"
+            "types": "{% raw %}{{localizationtitle}}{% endraw %}",
+            "typeuses": "{% raw %}{{localizationdesc}}{% endraw %}"
         }
     },
     "data" : {
@@ -80,15 +80,15 @@ Example template (`templatedwall.tpl`):
         "onRemoveAudio": "woodDeleteLight",
         "onPlaceAudio": "woodPlace",
         "sideall" : "planks",
-		"sidex+" : "{{wallpaper}}"
+		"sidex+" : "{% raw %}{{wallpaper}}{% endraw %}"
 	},
     "recipes": [
         {
-            "type": "{{craftingtype}}",
+            "type": "{% raw %}{{craftingtype}}{% endraw %}",
             "recipe": {
                 "results": [
                     {
-                        "type": "{{itemname}}"
+                        "type": "{% raw %}{{itemname}}{% endraw %}"
                     }
                 ],
                 "requires": [
@@ -105,7 +105,7 @@ Example template (`templatedwall.tpl`):
             }
         },
         {
-            "type": "{{craftingtype}}",
+            "type": "{% raw %}{{craftingtype}}{% endraw %}",
             "recipe": {
                 "results": [
                     {
@@ -116,7 +116,7 @@ Example template (`templatedwall.tpl`):
                 "requires": [
                     
                     {
-                        "type": "{{itemname}}",
+                        "type": "{% raw %}{{itemname}}{% endraw %}",
                         "amount": 1
                     }
                 ],
