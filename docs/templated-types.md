@@ -67,11 +67,11 @@ Example template (`templatedwall.tpl`):
 
 ```json
 {
-	"name": "\{\{itemname\}\}",
+	"name": "{% raw %}{{itemname}}{% endraw %}",
     "localization": {
         "en-US": {
-            "types": "\{\{localizationtitle\}\}",
-            "typeuses": "\{\{localizationdesc\}\}"
+            "types": "{{localizationtitle}}",
+            "typeuses": "{{localizationdesc}}"
         }
     },
     "data" : {
@@ -80,15 +80,15 @@ Example template (`templatedwall.tpl`):
         "onRemoveAudio": "woodDeleteLight",
         "onPlaceAudio": "woodPlace",
         "sideall" : "planks",
-		"sidex+" : "\{\{wallpaper\}\}"
+		"sidex+" : "{{wallpaper}}"
 	},
     "recipes": [
         {
-            "type": "\{\{craftingtype\}\}",
+            "type": "{{craftingtype}}",
             "recipe": {
                 "results": [
                     {
-                        "type": "\{\{itemname\}\}"
+                        "type": "{{itemname}}"
                     }
                 ],
                 "requires": [
@@ -105,7 +105,7 @@ Example template (`templatedwall.tpl`):
             }
         },
         {
-            "type": "\{\{craftingtype\}\}",
+            "type": "{{craftingtype}}",
             "recipe": {
                 "results": [
                     {
@@ -116,7 +116,7 @@ Example template (`templatedwall.tpl`):
                 "requires": [
                     
                     {
-                        "type": "\{\{itemname\}\}",
+                        "type": "{{itemname}}",
                         "amount": 1
                     }
                 ],
